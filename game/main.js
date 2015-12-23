@@ -3,6 +3,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create
 var player;
 var platforms;
 var walking = false;
+var jumping = false;
 
 function preload() {
   game.load.spritesheet('guy', 'assets/sprites/pablo.png', 42, 58);
@@ -49,7 +50,7 @@ function update() {
   if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
     player.scale.x = 1;
     
-    if (!walking) {
+    if (!jumping && !walking) {
         player.animations.play('walk');
         walking = true;
     }
@@ -60,7 +61,7 @@ function update() {
   else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
     player.scale.x = -1;
     
-    if(!walking) {
+    if(!jumping && !walking) {
       player.animations.play('walk');
       walking = true;
     }
@@ -68,12 +69,29 @@ function update() {
     player.body.velocity.x = -150;
   }
 
+
   else {
-    if (walking) {
+    if (!jumping && walking) {
        player.animations.play('idle');
        walking = false;
     }
 
-   player.body.velocity.x = 0;
+    player.body.velocity.x = 0;
+  }
+
+  if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && player.body.touching.down){
+    walking = false;
+    player.body.velocity.y = -500;
+    player.animations.play('jump');
+    jumping = true;
+
+  }
+
+  else if(player.body.touching.down) {
+    if (jumping) {
+      jumping = false;
+      player.animations.play('idle');
+      console.log('landed?');
+    }
   }
 }
