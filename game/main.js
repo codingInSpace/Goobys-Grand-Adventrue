@@ -34,8 +34,8 @@ function create() {
   ledge.body.immovable = true;
 
   sprite = game.add.sprite(0, 0, 'guy');
-  sprite.animations.add('walk');
-  sprite.animations.play('walk', 50, true);
+  sprite.animations.add('walk', [0, 1, 2, 3, 4], 20, true);
+  sprite.animations.play('walk');
 }
 
 function update() {
