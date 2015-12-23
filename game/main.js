@@ -4,6 +4,7 @@ var player;
 var platforms;
 var walking = false;
 var jumping = false;
+var throwing = false;
 
 function preload() {
   game.load.spritesheet('guy', 'assets/sprites/pablo.png', 42, 58);
@@ -41,6 +42,14 @@ function create() {
   player.animations.add('walk', [0, 1, 2, 3, 4], 20, true);
   player.animations.add('jump', [12, 13, 14, 15, 16], 10, true);
   player.animations.add('idle', [24, 25], 1, true);
+  
+  var throwAnimHandler = player.animations.add('throw', [36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46], 10, false);
+  throwAnimHandler.onComplete.add(function() {
+    // console.log("throw finished");
+    throwing = false;
+    player.animations.play('idle');
+  }, player);
+
   player.animations.play('idle');
 }
 
@@ -50,7 +59,7 @@ function update() {
   if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
     player.scale.x = 1;
     
-    if (!jumping && !walking) {
+    if (!throwing && !jumping && !walking) {
         player.animations.play('walk');
         walking = true;
     }
@@ -61,7 +70,7 @@ function update() {
   else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
     player.scale.x = -1;
     
-    if(!jumping && !walking) {
+    if (!throwing && !jumping && !walking) {
       player.animations.play('walk');
       walking = true;
     }
@@ -79,19 +88,34 @@ function update() {
     player.body.velocity.x = 0;
   }
 
+  if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
+    if (!throwing) {
+      player.animations.play('throw');
+      throwing = true;
+    }
+  }
+
   if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && player.body.touching.down){
     walking = false;
     player.body.velocity.y = -500;
-    player.animations.play('jump');
+    
+    if (!throwing) 
+      player.animations.play('jump');
+    
     jumping = true;
 
   }
 
-  else if(player.body.touching.down) {
+  else if (player.body.touching.down) {
     if (jumping) {
       jumping = false;
-      player.animations.play('idle');
-      console.log('landed?');
+
+      if (!throwing)
+	player.animations.play('idle');
+      
+     // console.log('landed?');
     }
+
   }
-}
+
+ }
