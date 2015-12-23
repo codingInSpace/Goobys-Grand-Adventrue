@@ -4,7 +4,7 @@ var sprite;
 var platforms;
 
 function preload() {
-  game.load.spritesheet('guy', 'assets/sprites/pablo.png', 41, 58);
+  game.load.spritesheet('guy', 'assets/sprites/pablo.png', 42, 58);
   game.load.image('sky', 'assets/sky1.png');
   game.load.image('ground', 'assets/ground.png');
 }
@@ -35,7 +35,9 @@ function create() {
 
   sprite = game.add.sprite(0, 0, 'guy');
   sprite.animations.add('walk', [0, 1, 2, 3, 4], 20, true);
-  sprite.animations.play('walk');
+  sprite.animations.add('jump', [12, 13, 14, 15, 16], 10, true);
+  sprite.animations.add('idle', [24, 25], 1, true);
+  sprite.animations.play('jump');
 }
 
 function update() {
