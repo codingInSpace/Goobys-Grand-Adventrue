@@ -44,22 +44,36 @@ function create() {
 }
 
 function update() {
-  game.physics.arcade.collide(platforms, player);
-  
-    if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
-       if (!walking) {
-           player.animations.play('walk');
-           walking = true;
-       }
-
-       player.body.velocity.x = 150;
+  game.physics.arcade.collide(platforms, player);		  
+    
+  if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
+    player.scale.x = 1;
+    
+    if (!walking) {
+        player.animations.play('walk');
+        walking = true;
     }
-    else {
-       if (walking) {
-           player.animations.play('idle');
-           walking = false;
-       }
 
-       player.body.velocity.x = 0;
+    player.body.velocity.x = 150;
+  }
+
+  else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
+    player.scale.x = -1;
+    
+    if(!walking) {
+      player.animations.play('walk');
+      walking = true;
     }
+
+    player.body.velocity.x = -150;
+  }
+
+  else {
+    if (walking) {
+       player.animations.play('idle');
+       walking = false;
+    }
+
+   player.body.velocity.x = 0;
+  }
 }
