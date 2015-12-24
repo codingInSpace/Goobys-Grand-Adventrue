@@ -100,7 +100,7 @@ function update() {
 
 
   else {
-    if (!jumping && walking) {
+    if (!throwing && !jumping && walking) {
        player.animations.play('idle');
        walking = false;
     }
