@@ -54,7 +54,7 @@ function create() {
   }
 
   // Initialize player
-  player = game.add.sprite(0, 300, 'guy'); 
+  player = game.add.sprite(30, 300, 'guy'); 
   player.anchor.setTo(0.5, 0.5);
   game.physics.arcade.enable(player);
   player.body.gravity.y = 1000;
