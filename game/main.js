@@ -2,6 +2,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create
 
 var player;
 var platforms;
+var fireballPool;
 var walking = false;
 var jumping = false;
 var throwing = false;
@@ -10,6 +11,7 @@ function preload() {
   game.load.spritesheet('guy', 'assets/sprites/pablo.png', 42, 58);
   game.load.image('sky', 'assets/sky1.png');
   game.load.image('ground', 'assets/ground.png');
+  game.load.spritesheet('fireball', 'assets/sprites/fireball.png', 64, 60);
 }
 
 function create() {
@@ -35,6 +37,23 @@ function create() {
   ledge = platforms.create(-150, 250, 'ground');
   ledge.body.immovable = true;
 
+  // Initialize pool of fireball projectiles
+  var N_FIREBALLS = 4;
+  fireballPool = game.add.group();
+
+  for (var i = 0; i < N_FIREBALLS; ++i) {
+    var fireball = game.add.sprite(0, 0, 'fireball');
+    fireballPool.add(fireball);
+
+    fireball.anchor.setTo(0.5, 0.5);
+    fireball.scale.y = 0.5;	//x scale is reset in throw function
+    game.physics.arcade.enable(fireball);
+    fireball.body.gravity.y = 300;
+    fireball.animations.add('sparkle', [0, 1, 2, 3], 10, true);
+    fireball.kill();	//set as dead initially
+  }
+
+  // Initialize player
   player = game.add.sprite(0, 300, 'guy'); 
   player.anchor.setTo(0.5, 0.5);
   game.physics.arcade.enable(player);
@@ -46,7 +65,7 @@ function create() {
   
   var throwAnimHandler = player.animations.add('throw', [36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46], 10, false);
   throwAnimHandler.onComplete.add(function() {
-    // console.log("throw finished");
+    throwProjectile();
     throwing = false;
     player.animations.play('idle');
   }, player);
@@ -56,7 +75,7 @@ function create() {
 
 function update() {
   game.physics.arcade.collide(platforms, player);		  
-    
+
   if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
     player.scale.x = 1;
     
@@ -113,10 +132,34 @@ function update() {
 
       if (!throwing)
 	player.animations.play('idle');
-      
-     // console.log('landed?');
     }
 
   }
 
- }
+  // Check if fireballs have collided with the ground
+  game.physics.arcade.collide(fireballPool, platforms, function(fireball, platform) {
+    fireball.kill();
+  }, null, this);
+}
+
+function throwProjectile() {
+  // Get first dead ball
+  var fireball = fireballPool.getFirstDead();
+
+  // Do nothing if no balls
+  if (fireball === null || fireball === undefined)
+    return;
+
+  // Revive and go
+  fireball.revive();
+  fireball.checkWorldBounds = true;
+  fireball.outOfBoundsKill = true;
+
+  fireball.scale.x = 0.5 * player.scale.x;	//set to 0.5 and sign equaling player direction
+  fireball.reset(player.x + 30 * player.scale.x, player.y - 10);
+
+  fireball.animations.play('sparkle');
+  fireball.body.velocity.x = 400;
+  fireball.body.velocity.x *= player.scale.x;
+  fireball.body.velocity.y = -70;
+}
