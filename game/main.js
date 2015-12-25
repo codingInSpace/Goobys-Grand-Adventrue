@@ -17,7 +17,7 @@ function preload() {
   game.load.image('galaxy', 'assets/galaxyscreenshot2.png');
   game.load.spritesheet('fireball', 'assets/sprites/fireball.png', 64, 60);
   game.load.tilemap('level1', 'assets/maps/level1.json', null, Phaser.Tilemap.TILED_JSON); 
-  game.load.image('tiles_Green', 'assets/tilesets/tiles_Green.png');
+  game.load.image('tiles_Green2', 'assets/tilesets/tiles_Green2.png');
   game.load.image('tiles_dark', 'assets/tilesets/tiles_dark.png');
   game.load.image('tiles_brown', 'assets/tilesets/tiles_brown.png');
 }
@@ -30,7 +30,7 @@ function create() {
   bgImage.fixedToCamera = true;
 
   level1 = game.add.tilemap('level1');
-  level1.addTilesetImage('tiles_Green');
+  level1.addTilesetImage('tiles_Green2');
   level1.addTilesetImage('tiles_brown');
   level1.addTilesetImage('tiles_dark');
 
