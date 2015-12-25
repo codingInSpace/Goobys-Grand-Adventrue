@@ -13,8 +13,8 @@ var layerForeground;
 var layerBackground;
 
 function preload() {
-  game.load.spritesheet('guy', 'assets/sprites/pablo.png', 42, 58);
-  game.load.image('sky', 'assets/sky1.png');
+  game.load.spritesheet('guy', 'assets/sprites/pablo2.png', 42, 58);
+  game.load.image('galaxy', 'assets/galaxyscreenshot2.png');
   game.load.spritesheet('fireball', 'assets/sprites/fireball.png', 64, 60);
   game.load.tilemap('level1', 'assets/maps/level1.json', null, Phaser.Tilemap.TILED_JSON); 
   game.load.image('tiles_Green', 'assets/tilesets/tiles_Green.png');
@@ -26,7 +26,7 @@ function create() {
   game.physics.startSystem(Phaser.Physics.ARCADE); 
   game.physics.arcade.gravity.y = 1200;
 
-  var bgImage = game.add.sprite(0, 0, 'sky');
+  var bgImage = game.add.sprite(0, 0, 'galaxy');
   bgImage.fixedToCamera = true;
 
   level1 = game.add.tilemap('level1');
