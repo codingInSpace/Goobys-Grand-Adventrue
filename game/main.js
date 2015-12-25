@@ -7,35 +7,66 @@ var walking = false;
 var jumping = false;
 var throwing = false;
 
+// map
+var level1;
+var layerTop;
+var layerMiddle;
+var layerBackground;
+var layerObjects;
+
 function preload() {
   game.load.spritesheet('guy', 'assets/sprites/pablo.png', 42, 58);
   game.load.image('sky', 'assets/sky1.png');
   game.load.image('ground', 'assets/ground.png');
   game.load.spritesheet('fireball', 'assets/sprites/fireball.png', 64, 60);
+  game.load.tilemap('level1', 'assets/maps/level1test.json', null, Phaser.Tilemap.TILED_JSON); 
+  game.load.image('tiles_Green', 'assets/tilesets/tiles_Green.png');
+  game.load.image('tiles_dark', 'assets/tilesets/tiles_dark.png');
+  game.load.image('tiles_brown', 'assets/tilesets/tiles_brown.png');
+  game.load.image('sky1', 'assets/sky1.png'); 
 }
 
 function create() {
-
-  // Enable the Arcade Physics system
-  game.physics.startSystem(Phaser.Physics.ARCADE);
+  game.physics.startSystem(Phaser.Physics.ARCADE); 
+  game.physics.arcade.gravity.y = 1200;
 
   game.add.sprite(0, 0, 'sky');
 
-  platforms = game.add.group();
-  platforms.enableBody = true;
-  var ground = platforms.create(0, game.world.height - 64, 'ground');
+  level1 = game.add.tilemap('level1');
+  //level1.addTilesetImage('tiles_Green');
+  level1.addTilesetImage('tiles_brown');
+  //level1.addTilesetImage('tiles_dark');
+  //level1.addTilesetImage('sky1');
+
+  layerTop = level1.createLayer('layer top');
+  //layerMiddle = level1.createLayer('layer middle');
+  //layerBackground = level1.createLayer('background');
+  //layerObjects = level1.createLayer('Object Layer 1');
+
+  // not necessary?
+  layerTop.resizeWorld();
+
+  level1.setCollisionByExclusion([0],true, 'layer top'); //relevant?
+  //level1.setCollisionByExclusion([0],true, 'Object Layer 1');
+
+  // Enable the Arcade Physics system
+  //game.physics.startSystem(Phaser.Physics.ARCADE);
+
+  //platforms = game.add.group();
+  //platforms.enableBody = true;
+  //var ground = platforms.create(0, game.world.height - 64, 'ground');
 
   // Scale ground to fit the width of the game
-  ground.scale.setTo(2, 2);
+  //ground.scale.setTo(2, 2);
 
   // This stops it from falling away when you jump on it
-  ground.body.immovable = true;
+  //ground.body.immovable = true;
 
   // Create two ledges
-  var ledge = platforms.create(375, 500, 'ground');
-  ledge.body.immovable = true;
-  ledge = platforms.create(-150, 250, 'ground');
-  ledge.body.immovable = true;
+  //var ledge = platforms.create(375, 500, 'ground');
+  //ledge.body.immovable = true;
+  //ledge = platforms.create(-150, 250, 'ground');
+  //ledge.body.immovable = true;
 
   // Initialize pool of fireball projectiles
   var N_FIREBALLS = 4;
@@ -48,16 +79,16 @@ function create() {
     fireball.anchor.setTo(0.5, 0.5);
     fireball.scale.y = 0.5;	//x scale is reset in throw function
     game.physics.arcade.enable(fireball);
-    fireball.body.gravity.y = 300;
+   // fireball.body.gravity.y = 300;
     fireball.animations.add('sparkle', [0, 1, 2, 3], 10, true);
     fireball.kill();	//set as dead initially
   }
 
   // Initialize player
-  player = game.add.sprite(30, 300, 'guy'); 
+  player = game.add.sprite(30, 0, 'guy'); 
   player.anchor.setTo(0.5, 0.5);
   game.physics.arcade.enable(player);
-  player.body.gravity.y = 1000;
+  //player.body.gravity.y = 1000;
 
   player.animations.add('walk', [0, 1, 2, 3, 4], 20, true);
   player.animations.add('jump', [12, 13, 14, 15, 16], 10, true);
@@ -71,10 +102,14 @@ function create() {
   }, player);
 
   player.animations.play('idle');
+
+  game.camera.follow(player);
 }
 
 function update() {
-  game.physics.arcade.collide(platforms, player);		  
+  //game.physics.arcade.collide(platforms, player);		  
+//  game.physics.arcade.collide(player, layerObjects);
+  game.physics.arcade.collide(player, layerTop);
 
   if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
     player.scale.x = 1;
@@ -115,7 +150,7 @@ function update() {
     }
   }
 
-  if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && player.body.touching.down){
+  if (game.input.keyboard.isDown(Phaser.Keyboard.UP) && player.body.blocked.down){
     walking = false;
     player.body.velocity.y = -500;
     
@@ -126,7 +161,7 @@ function update() {
 
   }
 
-  else if (player.body.touching.down) {
+  else if (player.body.blocked.down) {
     if (jumping) {
       jumping = false;
 
@@ -137,7 +172,7 @@ function update() {
   }
 
   // Check if fireballs have collided with the ground
-  game.physics.arcade.collide(fireballPool, platforms, function(fireball, platform) {
+  game.physics.arcade.collide(fireballPool, layerTop, function(fireball, platform) {
     fireball.kill();
   }, null, this);
 }
