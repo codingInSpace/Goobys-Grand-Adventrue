@@ -20,6 +20,7 @@ function preload() {
   game.load.image('tiles_Green2', 'assets/tilesets/tiles_Green2.png');
   game.load.image('tiles_dark', 'assets/tilesets/tiles_dark.png');
   game.load.image('tiles_brown', 'assets/tilesets/tiles_brown.png');
+  game.load.image('house', 'assets/sprites/house.png');
 }
 
 function create() {
@@ -33,6 +34,7 @@ function create() {
   level1.addTilesetImage('tiles_Green2');
   level1.addTilesetImage('tiles_brown');
   level1.addTilesetImage('tiles_dark');
+  level1.addTilesetImage('house');
 
   // Order matters
   layerBackground = level1.createLayer('layer background');
@@ -60,7 +62,7 @@ function create() {
   }
 
   // Initialize player
-  player = game.add.sprite(30, 0, 'guy'); 
+  player = game.add.sprite(170, 230, 'guy'); 
   player.anchor.setTo(0.5, 0.5);
   game.physics.arcade.enable(player);
   //player.body.gravity.y = 1000;
