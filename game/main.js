@@ -167,7 +167,7 @@ function throwProjectile() {
   fireball.reset(player.x + 30 * player.scale.x, player.y - 10);
 
   fireball.animations.play('sparkle');
-  fireball.body.velocity.x = 400;
+  fireball.body.velocity.x = 500;
   fireball.body.velocity.x *= player.scale.x;
-  fireball.body.velocity.y = -70;
+  fireball.body.velocity.y = -140;
 }
