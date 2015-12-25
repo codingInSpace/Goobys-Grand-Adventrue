@@ -9,64 +9,39 @@ var throwing = false;
 
 // map
 var level1;
-var layerTop;
-var layerMiddle;
+var layerForeground;
 var layerBackground;
-var layerObjects;
 
 function preload() {
   game.load.spritesheet('guy', 'assets/sprites/pablo.png', 42, 58);
   game.load.image('sky', 'assets/sky1.png');
-  game.load.image('ground', 'assets/ground.png');
   game.load.spritesheet('fireball', 'assets/sprites/fireball.png', 64, 60);
-  game.load.tilemap('level1', 'assets/maps/level1test.json', null, Phaser.Tilemap.TILED_JSON); 
+  game.load.tilemap('level1', 'assets/maps/level1.json', null, Phaser.Tilemap.TILED_JSON); 
   game.load.image('tiles_Green', 'assets/tilesets/tiles_Green.png');
   game.load.image('tiles_dark', 'assets/tilesets/tiles_dark.png');
   game.load.image('tiles_brown', 'assets/tilesets/tiles_brown.png');
-  game.load.image('sky1', 'assets/sky1.png'); 
 }
 
 function create() {
   game.physics.startSystem(Phaser.Physics.ARCADE); 
   game.physics.arcade.gravity.y = 1200;
 
-  game.add.sprite(0, 0, 'sky');
+  var bgImage = game.add.sprite(0, 0, 'sky');
+  bgImage.fixedToCamera = true;
 
   level1 = game.add.tilemap('level1');
-  //level1.addTilesetImage('tiles_Green');
+  level1.addTilesetImage('tiles_Green');
   level1.addTilesetImage('tiles_brown');
-  //level1.addTilesetImage('tiles_dark');
-  //level1.addTilesetImage('sky1');
+  level1.addTilesetImage('tiles_dark');
 
-  layerTop = level1.createLayer('layer top');
-  //layerMiddle = level1.createLayer('layer middle');
-  //layerBackground = level1.createLayer('background');
-  //layerObjects = level1.createLayer('Object Layer 1');
+  // Order matters
+  layerBackground = level1.createLayer('layer background');
+  layerForeground = level1.createLayer('layer foreground');
 
   // not necessary?
-  layerTop.resizeWorld();
+  layerForeground.resizeWorld();
 
-  level1.setCollisionByExclusion([0],true, 'layer top'); //relevant?
-  //level1.setCollisionByExclusion([0],true, 'Object Layer 1');
-
-  // Enable the Arcade Physics system
-  //game.physics.startSystem(Phaser.Physics.ARCADE);
-
-  //platforms = game.add.group();
-  //platforms.enableBody = true;
-  //var ground = platforms.create(0, game.world.height - 64, 'ground');
-
-  // Scale ground to fit the width of the game
-  //ground.scale.setTo(2, 2);
-
-  // This stops it from falling away when you jump on it
-  //ground.body.immovable = true;
-
-  // Create two ledges
-  //var ledge = platforms.create(375, 500, 'ground');
-  //ledge.body.immovable = true;
-  //ledge = platforms.create(-150, 250, 'ground');
-  //ledge.body.immovable = true;
+  level1.setCollisionByExclusion([0],true, 'layer foreground'); //relevant?
 
   // Initialize pool of fireball projectiles
   var N_FIREBALLS = 4;
@@ -107,9 +82,7 @@ function create() {
 }
 
 function update() {
-  //game.physics.arcade.collide(platforms, player);		  
-//  game.physics.arcade.collide(player, layerObjects);
-  game.physics.arcade.collide(player, layerTop);
+  game.physics.arcade.collide(player, layerForeground);
 
   if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
     player.scale.x = 1;
@@ -171,8 +144,8 @@ function update() {
 
   }
 
-  // Check if fireballs have collided with the ground
-  game.physics.arcade.collide(fireballPool, layerTop, function(fireball, platform) {
+  // Check if fireballs have collided
+  game.physics.arcade.collide(fireballPool, layerForeground, function(fireball, layer) {
     fireball.kill();
   }, null, this);
 }
