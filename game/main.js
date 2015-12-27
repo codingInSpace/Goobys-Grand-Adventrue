@@ -75,7 +75,12 @@ function create() {
   throwAnimHandler.onComplete.add(function() {
     throwProjectile();
     throwing = false;
-    player.animations.play('idle');
+
+    if (jumping)
+      player.animations.play('jump');
+    else
+      player.animations.play('idle');
+    
   }, player);
 
   player.animations.play('idle');
@@ -89,7 +94,7 @@ function update() {
   if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
     player.scale.x = 1;
     
-    if (!throwing && !jumping && !walking) {
+    if (!throwing && !jumping) {
         player.animations.play('walk');
         walking = true;
     }
@@ -100,7 +105,7 @@ function update() {
   else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)){
     player.scale.x = -1;
     
-    if (!throwing && !jumping && !walking) {
+    if (!throwing && !jumping) {
       player.animations.play('walk');
       walking = true;
     }
